@@ -143,14 +143,14 @@ void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track
             len += (track.size()-i)*y;
         }
     }
-    cout << "overall wire length: " << len << endl;
+    cout << "Overall wire length: " << len << endl;
 
     int via = 0;
     for (int k = 1; k <= np; k++) {
         if (X[k] != 0) via++;
         if (Y[k] != 0) via++;
     }
-    cout << "number of vias: " << via << endl;
+    cout << "Number of vias: " << via << endl;
 }
 
 int main(int argc, char** argv) {

@@ -8,8 +8,9 @@ using namespace std;
 
 int np, nn;
 bool isHead(int i, vector<vector<int>> &vcg) { // whether net_Ii is a head or not.
+    if (vcg[i][i] == -1) return false; // the net is already inserted into a track.
     for (int j = 1; j <= nn; j++) {
-        if (vcg[j][i] && j != i) return false;
+        if (vcg[j][i] > 0 && j != i) return false;
     }
     return true;
 }
@@ -75,17 +76,40 @@ int main() {
         cout << "I" << elem.first << "[" << elem.second.first << ", " << elem.second.second << "]\n";
     }
 
-    cout << "heads: " << endl;
-    for (int i = 1; i <= nn; i++) {
-        if (isHead(i, vcg)) cout << "I"<<i<<"["<<interval[i].first<<", "<< interval[i].second<<"]\n";
+    int watermark = 0;
+    vector<vector<int>> track;
+    while (!intervalS.empty()) {
+        if (track.size() > np) break;
+        cout << "track_" << track.size()+1 << ":\n";
+        cout << "  heads: " << endl;
+        for (int i = 1; i <= nn; i++) {
+            if (isHead(i, vcg)) cout << "  I"<<i<<"["<<interval[i].first<<", "<< interval[i].second<<"]\n";
+        }
+        vector<int> toBeDel; toBeDel.reserve(100);
+        for (auto &elem: intervalS) {
+            if (elem.second.first <= watermark) continue;
+            if (!isHead(elem.first, vcg)) continue;
+            for (auto &elem: vcg[elem.first]) elem = -1; // update VCG, remove the head net, after inserted into the track.
+            toBeDel.eb(elem.first);
+            watermark = elem.second.second;
+            cout << "\troute I" << elem.first << "[" << elem.second.first << ", " << elem.second.second << "]: watermark = " << watermark << ".\n";
+        }
+        track.eb(toBeDel);
+        for (auto &elem: toBeDel) intervalS.erase(elem);
+        watermark = 0;
     }
 
-    cout << "VCG: " << endl;
-    for (int i = 0; i < np; i++) {
-        for (int j = 0; j < np; j++) {
-            if (vcg[i][j]) cout << i << "->" << j << endl;
-            // cout << vcg[i][j] << " ";
-        }
-        // cout << endl;
-    }
+    // cout << "heads: " << endl;
+    // for (int i = 1; i <= nn; i++) {
+    //     if (isHead(i, vcg)) cout << "I"<<i<<"["<<interval[i].first<<", "<< interval[i].second<<"]\n";
+    // }
+
+    // cout << "VCG: " << endl;
+    // for (int i = 0; i < np; i++) {
+    //     for (int j = 0; j < np; j++) {
+    //         if (vcg[i][j]) cout << i << "->" << j << endl;
+    //         // cout << vcg[i][j] << " ";
+    //     }
+    //     // cout << endl;
+    // }
 }

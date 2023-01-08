@@ -131,19 +131,21 @@ void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track
     cout << "number of vias: " << via << endl;
 }
 
-int main() {
+int main(int argc, char** argv) {
     ios::sync_with_stdio(0);
     cin.tie(NULL);
     
+    ifstream in(argv[1]);
+    
     X.eb(0), Y.eb(0); // dummy element
-    cin >> np >> nn;
+    in >> np >> nn;
     vector<vector<int>> vcg(np, vector<int>(np, 0));
     map<int, pair<int, int>> interval; // len: nn
     int tmp = np;
     int col = 1;
     while (tmp--) {
         int ix, iy;
-        cin >> ix >> iy; X.eb(ix); Y.eb(iy);
+        in >> ix >> iy; X.eb(ix); Y.eb(iy);
         if (interval.count(ix)) {
             if (col > interval[ix].second) interval[ix].second = col;
         }

@@ -60,28 +60,59 @@ unordered_map<int, pair<int, int>> sort(map<int, pair<int, int>> &interval) {
 
 vector<int> X, Y;
 void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track) {
-    for (int i = 1; i <= np; i++) {
-        cout << " " << setw(2) << i << "  ";
-    }
+    for (int i = 1; i <= np; i++) cout << " " << setw(2) << i << "  ";
     cout << endl;
-    for (auto &elem: X) {
-        cout << "  " << elem << "  ";
-    }
+    for (int i = 1; i <= np; i++) cout << "  " << X[i] << "  ";
     cout << endl;
     for (int i = 1; i <= 5*np; i++) cout << "-";
-    cout << endl;
-    cout << "  |____|\n";
-    for (int i = 1; i <= track.size()+1; i++) {
-        for (auto &elem: track) {
+    cout << "\n";
 
+    // plot the routing channel
+    vector<vector<char>> result(track.size(), vector<char>(np*5, ' '));
+    string wire_char = "*#@$%^&+?><~abcdefghijklmnofqrstuvwxyzABCEFGHIJKMNOPQSTVWXYZ:;";
+    vector<char> wire; wire.reserve(wire_char.size());
+    for (auto &c: wire_char) wire.eb(c);
+    for (int i = 0; i < track.size(); i++) { // print the result track by track
+        for (int n = 0; n < track[i].size(); n++) { // iterate through the track in the order of start of the nets
+            int net = track[i][n];
+            int start = interval[track[i][n]].first; // start of the net
+            int terminal = interval[track[i][n]].second; // end of the net
+            for (int j = start; j <= terminal; j++) {
+                if (X[j] == net) {
+                    for (int k = i; k >= 0; k--) {
+                        if (j == start && k == i) result[k][2+(j-1)*5] = 'R';
+                        else if (j == terminal && k == i) result[k][2+(j-1)*5] = 'L';
+                        else result[k][2+(j-1)*5] = 'U';
+                    }
+                }
+                else if (Y[j] == net) {
+                    for (int k = i; k < track.size(); k++) {
+                        if (j == start && k == i) result[k][2+(j-1)*5] = 'R';
+                        else if (j == terminal && k == i) result[k][2+(j-1)*5] = 'L';
+                        else result[k][2+(j-1)*5] = 'D';
+                    }
+                }
+            }
+            for (int j = 0; j < np*5; j++) {
+                if (j < 2+(start-1)*5 || j > 2+(terminal-1)*5) continue;
+                if (result[i][j] == ' ') result[i][j] = wire[i%wire.size()];
+            }
+        }
+    }
+    for (auto &row: result) {
+        for (auto &elem: row) {
+            if (elem == 'U') cout << "↑";
+            else if (elem == 'D') cout << "↓";
+            else if (elem == 'R') cout << "→";
+            else if (elem == 'L') cout << "←";
+            else cout << elem;
         }
         cout << endl;
     }
+
     for (int i = 1; i <= 5*np; i++) cout << "-";
     cout << endl;
-    for (auto &elem: Y) {
-        cout << "  " << elem << "  ";
-    }
+    for (int i = 1; i <= np; i++) cout << "  " << Y[i] << "  ";
     cout << endl;
 }
 
@@ -89,6 +120,7 @@ int main() {
     ios::sync_with_stdio(0);
     cin.tie(NULL);
     
+    X.eb(0), Y.eb(0); // dummy element
     cin >> np >> nn;
     vector<vector<int>> vcg(np, vector<int>(np, 0));
     map<int, pair<int, int>> interval; // len: nn

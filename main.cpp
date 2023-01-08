@@ -39,6 +39,52 @@ unordered_map<int, pair<int, int>> sort(map<int, pair<int, int>> &interval) {
     return intervalS;
 }
 
+// bool acyclic(int n, int a, int b, vector<vector<int>> &vcg) {
+//     vector<vector<vector<int>>> mats = {{{0}}};
+//     vector<vector<int>> tmp;
+//     for (int i = 1; i <= nn; i++) {
+//         vector<int> ttmp(nn, 0);
+//         for (int j = 1; j <= nn; j++) {
+//             ttmp[i-1][j-1] += vcg[i][j];
+//         }
+//         tmp.eb(ttmp);
+//     }
+//     mats.eb(tmp);
+//     bool start = false;
+//     while (true) {
+//         if (start) {
+
+//         }
+//     }
+// }
+
+vector<int> X, Y;
+void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track) {
+    for (int i = 1; i <= np; i++) {
+        cout << " " << setw(2) << i << "  ";
+    }
+    cout << endl;
+    for (auto &elem: X) {
+        cout << "  " << elem << "  ";
+    }
+    cout << endl;
+    for (int i = 1; i <= 5*np; i++) cout << "-";
+    cout << endl;
+    cout << "  |____|\n";
+    for (int i = 1; i <= track.size()+1; i++) {
+        for (auto &elem: track) {
+
+        }
+        cout << endl;
+    }
+    for (int i = 1; i <= 5*np; i++) cout << "-";
+    cout << endl;
+    for (auto &elem: Y) {
+        cout << "  " << elem << "  ";
+    }
+    cout << endl;
+}
+
 int main() {
     ios::sync_with_stdio(0);
     cin.tie(NULL);
@@ -50,7 +96,7 @@ int main() {
     int col = 1;
     while (tmp--) {
         int ix, iy;
-        cin >> ix >> iy;
+        cin >> ix >> iy; X.eb(ix); Y.eb(iy);
         if (interval.count(ix)) {
             if (col > interval[ix].second) interval[ix].second = col;
         }
@@ -63,6 +109,15 @@ int main() {
 
         if (ix == 0 || iy == 0) continue;
         vcg[ix][iy] = 1;
+    }
+
+    cout << "VCG: " << endl;
+    for (int i = 0; i < np; i++) {
+        for (int j = 0; j < np; j++) {
+            if (vcg[i][j]) cout << i << "->" << j << endl;
+            // cout << vcg[i][j] << " ";
+        }
+        // cout << endl;
     }
 
     // cout << "before sorted: \n";
@@ -81,10 +136,10 @@ int main() {
     while (!intervalS.empty()) {
         if (track.size() > np) break;
         cout << "track_" << track.size()+1 << ":\n";
-        cout << "  heads: " << endl;
-        for (int i = 1; i <= nn; i++) {
-            if (isHead(i, vcg)) cout << "  I"<<i<<"["<<interval[i].first<<", "<< interval[i].second<<"]\n";
-        }
+        // cout << "  heads: " << endl;
+        // for (int i = 1; i <= nn; i++) {
+        //     if (isHead(i, vcg)) cout << "  I"<<i<<"["<<interval[i].first<<", "<< interval[i].second<<"]\n";
+        // }
         vector<int> toBeDel; toBeDel.reserve(100);
         for (auto &elem: intervalS) {
             if (elem.second.first <= watermark) continue;
@@ -104,12 +159,5 @@ int main() {
     //     if (isHead(i, vcg)) cout << "I"<<i<<"["<<interval[i].first<<", "<< interval[i].second<<"]\n";
     // }
 
-    // cout << "VCG: " << endl;
-    // for (int i = 0; i < np; i++) {
-    //     for (int j = 0; j < np; j++) {
-    //         if (vcg[i][j]) cout << i << "->" << j << endl;
-    //         // cout << vcg[i][j] << " ";
-    //     }
-    //     // cout << endl;
-    // }
+    print_result(interval, track);
 }

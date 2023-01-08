@@ -6,7 +6,7 @@
 #define endl '\n'
 using namespace std;
 
-int np, nn;
+int np, nn; // # of pin, # of net
 bool isHead(int i, vector<vector<int>> &vcg) { // whether net_Ii is a head or not.
     if (vcg[i][i] == -1) return false; // the net is already inserted into a track.
     for (int j = 1; j <= nn; j++) {
@@ -15,6 +15,7 @@ bool isHead(int i, vector<vector<int>> &vcg) { // whether net_Ii is a head or no
     return true;
 }
 
+// sort interval by the begin of it
 bool interval_comp(pair<int, pair<int, int>> &lhs, pair<int, pair<int, int>> &rhs) {
     if (lhs.second.first > rhs.second.first) {
         return true;
@@ -25,7 +26,7 @@ bool interval_comp(pair<int, pair<int, int>> &lhs, pair<int, pair<int, int>> &rh
     }
     else return false;
 }
-
+// sort interval by the begin of it
 unordered_map<int, pair<int, int>> sort(map<int, pair<int, int>> &interval) {
     vector<pair<int, pair<int, int>>> tmp;
     for (auto &elem: interval) {
@@ -40,30 +41,17 @@ unordered_map<int, pair<int, int>> sort(map<int, pair<int, int>> &interval) {
 }
 
 // bool acyclic(int n, int a, int b, vector<vector<int>> &vcg) {
-//     vector<vector<vector<int>>> mats = {{{0}}};
-//     vector<vector<int>> tmp;
-//     for (int i = 1; i <= nn; i++) {
-//         vector<int> ttmp(nn, 0);
-//         for (int j = 1; j <= nn; j++) {
-//             ttmp[i-1][j-1] += vcg[i][j];
-//         }
-//         tmp.eb(ttmp);
-//     }
-//     mats.eb(tmp);
-//     bool start = false;
-//     while (true) {
-//         if (start) {
-
-//         }
-//     }
+    // if ((A^n)ji = (A)ij = 1) then detect a cycle: i->j->i.
 // }
 
-vector<int> X, Y;
+vector<int> X, Y; // to record the name of pins
 void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track) {
+    cout << "\nThe resulting routing graph: \n";
+    cout << "col:";
     for (int i = 1; i <= np; i++) cout << " " << setw(2) << i << "  ";
-    cout << endl;
+    cout << "\npin:";
     for (int i = 1; i <= np; i++) cout << "  " << X[i] << "  ";
-    cout << endl;
+    cout << "\n    ";
     for (int i = 1; i <= 5*np; i++) cout << "-";
     cout << "\n";
 
@@ -100,6 +88,7 @@ void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track
         }
     }
     for (auto &row: result) {
+        cout << "    ";
         for (auto &elem: row) {
             if (elem == 'U') cout << "↑";
             else if (elem == 'D') cout << "↓";
@@ -110,10 +99,36 @@ void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track
         cout << endl;
     }
 
+    cout << "    ";
     for (int i = 1; i <= 5*np; i++) cout << "-";
-    cout << endl;
+    cout << "\n    ";
     for (int i = 1; i <= np; i++) cout << "  " << Y[i] << "  ";
     cout << endl;
+
+    cout << "Number of tracks: " << track.size() << endl;
+
+    int len = 0;
+    for (int i = 0; i < track.size(); i++) {
+        for (int j = 0; j < track[i].size(); j++) {
+            int net = track[i][j];
+            len += interval[net].second - interval[net].first;
+            int x = 0, y = 0;
+            for (int k = 1; k <= np; k++) {
+                if (X[k] == net) x++;
+                if (Y[k] == net) y++;
+            }
+            len += (i+1)*x;
+            len += (track.size()-i)*y;
+        }
+    }
+    cout << "overall wire length: " << len << endl;
+
+    int via = 0;
+    for (int k = 1; k <= np; k++) {
+        if (X[k] != 0) via++;
+        if (Y[k] != 0) via++;
+    }
+    cout << "number of vias: " << via << endl;
 }
 
 int main() {
@@ -143,35 +158,36 @@ int main() {
         vcg[ix][iy] = 1;
     }
 
-    cout << "VCG: " << endl;
-    for (int i = 0; i < np; i++) {
-        for (int j = 0; j < np; j++) {
-            if (vcg[i][j]) cout << i << "->" << j << endl;
-            // cout << vcg[i][j] << " ";
-        }
-        // cout << endl;
-    }
-
     // cout << "before sorted: \n";
     // for (auto &elem: interval) {
     //     cout << "I" << elem.first << "[" << elem.second.first << ", " << elem.second.second << "]\n";
     // }
 
-    cout << "after sorted: \n";
+    cout << "Sorted intervals of nets: \n";
     auto intervalS = sort(interval);
     for (auto &elem: intervalS) {
-        cout << "I" << elem.first << "[" << elem.second.first << ", " << elem.second.second << "]\n";
+        cout << "\tI" << elem.first << "[" << elem.second.first << ", " << elem.second.second << "]\n";
+    }
+
+    cout << "\nVertical constraint: " << endl;
+    for (int i = 0; i < np; i++) {
+        for (int j = 0; j < np; j++) {
+            if (vcg[i][j]) cout << "\tI" << i << "->I" << j << endl;
+            // cout << vcg[i][j] << " ";
+        }
+        // cout << endl;
     }
 
     int watermark = 0;
     vector<vector<int>> track;
     while (!intervalS.empty()) {
         if (track.size() > np) break;
-        cout << "track_" << track.size()+1 << ":\n";
-        // cout << "  heads: " << endl;
-        // for (int i = 1; i <= nn; i++) {
-        //     if (isHead(i, vcg)) cout << "  I"<<i<<"["<<interval[i].first<<", "<< interval[i].second<<"]\n";
-        // }
+        cout << "\ntrack_" << track.size()+1 << ":\n";
+        cout << "  head(s): ";
+        for (int i = 1; i <= nn; i++) {
+            if (isHead(i, vcg)) cout << "I" << i << ", ";
+        }
+        cout << endl;
         vector<int> toBeDel; toBeDel.reserve(100);
         for (auto &elem: intervalS) {
             if (elem.second.first <= watermark) continue;
@@ -185,11 +201,6 @@ int main() {
         for (auto &elem: toBeDel) intervalS.erase(elem);
         watermark = 0;
     }
-
-    // cout << "heads: " << endl;
-    // for (int i = 1; i <= nn; i++) {
-    //     if (isHead(i, vcg)) cout << "I"<<i<<"["<<interval[i].first<<", "<< interval[i].second<<"]\n";
-    // }
 
     print_result(interval, track);
 }

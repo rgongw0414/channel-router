@@ -46,20 +46,36 @@ unordered_map<int, pair<int, int>> sort(map<int, pair<int, int>> &interval) {
 
 vector<int> X, Y; // to record the name of pins
 void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track) {
+    int dig = 1; int NP = np;
+    while (NP/10 > 0) {
+        NP = NP / 10;
+        dig++;
+    }
     cout << "\nThe resulting routing graph: \n";
     cout << "col:";
-    for (int i = 1; i <= np; i++) cout << " " << setw(2) << i << "  ";
+    for (int i = 1; i <= np; i++) {
+        for (int j = 1; j <= 3-dig; j++) cout << " ";
+        cout << setw(dig) << i; cout << "  ";
+    }
+    dig = 1; int NN = nn;
+    while (NN/10 > 0) {
+        NN = NN / 10;
+        dig++;
+    }
     cout << "\npin:";
-    for (int i = 1; i <= np; i++) cout << "  " << X[i] << "  ";
+    for (int i = 1; i <= np; i++) {
+        for (int j = 1; j <= 3-dig; j++) cout << " ";
+        cout << setw(dig) << X[i]; cout << "  ";
+    }
     cout << "\n    ";
     for (int i = 1; i <= 5*np; i++) cout << "-";
     cout << "\n";
 
     // plot the routing channel
     vector<vector<char>> result(track.size(), vector<char>(np*5, ' '));
-    string wire_char = "*#@$%^&+?><~abcdefghijklmnofqrstuvwxyzABCEFGHIJKMNOPQSTVWXYZ:;";
-    vector<char> wire; wire.reserve(wire_char.size());
-    for (auto &c: wire_char) wire.eb(c);
+    // string wire_char = "*#@$%^&+?><~abcdefghijklmnofqrstuvwxyzABCEFGHIJKMNOPQSTVWXYZ:;";
+    // vector<char> wire; wire.reserve(wire_char.size());
+    // for (auto &c: wire_char) wire.eb(c);
     for (int i = 0; i < track.size(); i++) { // print the result track by track
         for (int n = 0; n < track[i].size(); n++) { // iterate through the track in the order of start of the nets
             int net = track[i][n];
@@ -70,30 +86,36 @@ void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track
                     for (int k = i; k >= 0; k--) {
                         if (j == start && k == i) result[k][2+(j-1)*5] = 'R';
                         else if (j == terminal && k == i) result[k][2+(j-1)*5] = 'L';
-                        else result[k][2+(j-1)*5] = 'U';
+                        else {
+                            if (k == 0) result[k][2+(j-1)*5] = 'U';
+                            else result[k][2+(j-1)*5] = '#';
+                        }
                     }
                 }
                 else if (Y[j] == net) {
                     for (int k = i; k < track.size(); k++) {
                         if (j == start && k == i) result[k][2+(j-1)*5] = 'R';
                         else if (j == terminal && k == i) result[k][2+(j-1)*5] = 'L';
-                        else result[k][2+(j-1)*5] = 'D';
+                        else {
+                            if (k == track.size()-1) result[k][2+(j-1)*5] = 'D';
+                            else result[k][2+(j-1)*5] = '#';
+                        }
                     }
                 }
             }
             for (int j = 0; j < np*5; j++) {
                 if (j < 2+(start-1)*5 || j > 2+(terminal-1)*5) continue;
-                if (result[i][j] == ' ') result[i][j] = wire[i%wire.size()];
+                if (result[i][j] == ' ') result[i][j] = '#'; // result[i][j] = wire[i%wire.size()];
             }
         }
     }
     for (auto &row: result) {
         cout << "    ";
         for (auto &elem: row) {
-            if (elem == 'U') cout << "|";
-            else if (elem == 'D') cout << "|";
-            else if (elem == 'R') cout << "|";
-            else if (elem == 'L') cout << "|";
+            if (elem == 'U') cout << "^";
+            else if (elem == 'D') cout << "v";
+            else if (elem == 'R') cout << ">";
+            else if (elem == 'L') cout << "<";
             else cout << elem;
         }
         cout << endl;
@@ -190,17 +212,17 @@ int main(int argc, char** argv) {
             if (isHead(i, vcg)) cout << "I" << i << ", ";
         }
         cout << endl;
-        vector<int> toBeDel; toBeDel.reserve(100);
+        vector<int> nets; nets.reserve(100);
         for (auto &elem: intervalS) {
             if (elem.second.first <= watermark) continue;
             if (!isHead(elem.first, vcg)) continue;
             for (auto &elem: vcg[elem.first]) elem = -1; // update VCG, remove the head net, after inserted into the track.
-            toBeDel.eb(elem.first);
+            nets.eb(elem.first);
             watermark = elem.second.second;
             cout << "\troute I" << elem.first << "[" << elem.second.first << ", " << elem.second.second << "]: watermark = " << watermark << ".\n";
         }
-        track.eb(toBeDel);
-        for (auto &elem: toBeDel) intervalS.erase(elem);
+        track.eb(nets);
+        for (auto &elem: nets) intervalS.erase(elem);
         watermark = 0;
     }
 

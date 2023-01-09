@@ -219,7 +219,7 @@ int main(int argc, char** argv) {
             for (auto &elem: vcg[elem.first]) elem = -1; // update VCG, remove the head net, after inserted into the track.
             nets.eb(elem.first);
             watermark = elem.second.second;
-            cout << "\troute I" << elem.first << "[" << elem.second.first << ", " << elem.second.second << "]: watermark = " << watermark << ".\n";
+            cout << "  route I" << elem.first << "[" << elem.second.first << ", " << elem.second.second << "]: watermark = " << watermark << ";\n";
         }
         track.eb(nets);
         for (auto &elem: nets) intervalS.erase(elem);

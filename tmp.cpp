@@ -94,8 +94,21 @@ void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track
                 }
                 else if (Y[j] == net) {
                     for (int k = i; k < track.size(); k++) {
-                        if (j == start && k == i) result[k][2+(j-1)*5] = 'R';
-                        else if (j == terminal && k == i) result[k][2+(j-1)*5] = 'L';
+                        if (j == start && k == i) {
+                            if (k == 0 || k == track.size()-1) result[k][2+(j-1)*5] = '|';
+                            else {
+                                if (i <= track.size()/2) result[k][2+(j-1)*5] = '_';
+                                else result[k][2+(j-1)*5] = '-';
+                            }
+
+                        }
+                        else if (j == terminal && k == i) {
+                            if (k == 0 || k == track.size()-1) result[k][2+(j-1)*5] = '|';
+                            else {
+                                if (i <= track.size()/2) result[k][2+(j-1)*5] = '_';
+                                else result[k][2+(j-1)*5] = '-';
+                            }
+                        }
                         else {
                             if (k == track.size()-1) result[k][2+(j-1)*5] = '|';
                             else result[k][2+(j-1)*5] = '|';

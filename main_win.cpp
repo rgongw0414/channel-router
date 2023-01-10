@@ -190,13 +190,13 @@ int main(int argc, char** argv) {
     cout << "Sorted intervals of nets: \n";
     auto intervalS = sort(interval);
     for (auto &elem: intervalS) {
-        cout << "\tI" << elem.first << "[" << elem.second.first << ", " << elem.second.second << "]\n";
+        cout << "  I" << elem.first << "[" << elem.second.first << ", " << elem.second.second << "]\n";
     }
 
     cout << "\nVertical constraint: " << endl;
     for (int i = 0; i < np; i++) {
         for (int j = 0; j < np; j++) {
-            if (vcg[i][j]) cout << "\tI" << i << "->I" << j << endl;
+            if (vcg[i][j]) cout << "  I" << i << "->I" << j << endl;
             // cout << vcg[i][j] << " ";
         }
         // cout << endl;

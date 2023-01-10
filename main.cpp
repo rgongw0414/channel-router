@@ -84,20 +84,34 @@ void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track
             for (int j = start; j <= terminal; j++) {
                 if (X[j] == net) {
                     for (int k = i; k >= 0; k--) {
-                        if (j == start && k == i) result[k][2+(j-1)*5] = 'R';
-                        else if (j == terminal && k == i) result[k][2+(j-1)*5] = 'L';
+                        if (j == start && k == i) {
+                            if (k == 0) result[k][2+(j-1)*5] = '^';
+                            else result[k][2+(j-1)*5] = 'R';
+                        }
+                        else if (j == terminal && k == i) {
+                            if (k == 0) result[k][2+(j-1)*5] = '^';
+                            else result[k][2+(j-1)*5] = 'L';
+                        }
                         else {
-                            if (k == 0) result[k][2+(j-1)*5] = '|';
+                            if (k == 0) result[k][2+(j-1)*5] = '^';
+                            else if (k == i) result[k][2+(j-1)*5] = '-';
                             else result[k][2+(j-1)*5] = '|';
                         }
                     }
                 }
                 else if (Y[j] == net) {
                     for (int k = i; k < track.size(); k++) {
-                        if (j == start && k == i) result[k][2+(j-1)*5] = 'R';
-                        else if (j == terminal && k == i) result[k][2+(j-1)*5] = 'L';
+                        if (j == start && k == i) {
+                            if (k == track.size()-1) result[k][2+(j-1)*5] = 'v';
+                            else result[k][2+(j-1)*5] = 'R';
+                        }
+                        else if (j == terminal && k == i) {
+                            if (k == track.size()-1) result[k][2+(j-1)*5] = 'v';
+                            else result[k][2+(j-1)*5] = 'R';
+                        }
                         else {
-                            if (k == track.size()-1) result[k][2+(j-1)*5] = '|';
+                            if (k == track.size()-1) result[k][2+(j-1)*5] = 'v';
+                            else if (k == i) result[k][2+(j-1)*5] = '-';
                             else result[k][2+(j-1)*5] = '|';
                         }
                     }
@@ -107,8 +121,7 @@ void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track
                 if (j < 2+(start-1)*5 || j > 2+(terminal-1)*5) continue;
                 if (result[i][j] == ' ') {
                     // result[i][j] = wire[i%wire.size()];
-                    if (i <= track.size()/2) result[i][j] = '_';
-                    else result[i][j] = '-';
+                    result[i][j] = '-';
                 }
             }
         }
@@ -116,10 +129,10 @@ void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track
     for (auto &row: result) {
         cout << "    ";
         for (auto &elem: row) {
-            if (elem == 'U') cout << "↑";
-            else if (elem == 'D') cout << "↓";
-            else if (elem == 'R') cout << "→";
-            else if (elem == 'L') cout << "←";
+            if (elem == 'U') cout << "^";
+            else if (elem == 'D') cout << "v";
+            else if (elem == 'R') cout << ">";
+            else if (elem == 'L') cout << "<";
             else cout << elem;
         }
         cout << endl;

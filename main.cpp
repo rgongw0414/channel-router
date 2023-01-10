@@ -119,10 +119,7 @@ void print_result(map<int, pair<int, int>> &interval, vector<vector<int>> &track
             }
             for (int j = 0; j < np*5; j++) {
                 if (j < 2+(start-1)*5 || j > 2+(terminal-1)*5) continue;
-                if (result[i][j] == ' ') {
-                    // result[i][j] = wire[i%wire.size()];
-                    result[i][j] = '-';
-                }
+                if (result[i][j] == ' ') result[i][j] = '-'; // result[i][j] = wire[i%wire.size()];
             }
         }
     }

@@ -6,7 +6,7 @@ g++  main.cpp -omain && ./main.exe  bench4.txt
 ``
 
 ```
-Sorted intervals of nets: 
+Sorted intervals of nets:
   I1[1, 3]
   I2[1, 5]
   I5[2, 6]
@@ -40,7 +40,7 @@ track_4:
   route I3[6, 8]: watermark = 8;
 
 The resulting routing graph:
-col:  1    2    3    4    5    6    7    8    9   10   11  
+col:  1    2    3    4    5    6    7    8    9   10   11
 pin:  1    1    1    2    2    5    6    3    0    4    0
     -------------------------------------------------------
       ^----^----^    ^    ^    ^    ^----^---->    ^---->

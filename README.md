@@ -1,5 +1,14 @@
-# channel-router
-constrained left-hand algorithm 
+# Two-layer Channel routing
+* Constrained (vertical, and horizontal) left-hand algorithm
+* Each pin is labeled with a number from 0 to 1000
+* Problem: \
+  Given the label of each upper and lower pins, write a program to find the channel routing with the minimum cost.
+* Cost: 
+  * Number of tracks
+  * Overall wire length
+  * Number of vias
+* Benchmarks
+  * bench1.txt to bench8.txt
 
 ``
 g++  main.cpp -omain && ./main.exe  bench4.txt   

@@ -1,5 +1,4 @@
-# Two-layer Channel routing
-* Constrained (vertical, and horizontal) left-hand algorithm
+# Grid-based Two-layer Channel Routing
 * Each pin is labeled with a number from 0 to 1000
 * Problem: \
   Given the label of each upper and lower pins, write a program to find the channel routing with the minimum cost.
@@ -9,11 +8,15 @@
   * Number of vias
 * Benchmarks
   * bench1.txt to bench8.txt
-
-``
+* Method: Constrained (considering vertical constraints) left-hand algorithm
+  1. After finish reading the given pins, record the vertical constraint of each pin with a vertical contraint graph, namely the array vcg in the code.
+  2. Sort the given pins by their pin-label number.
+  3. Greedily, pick the unconstrained pin to route until finished.       
+* Usage: 
+```
 g++  main.cpp -omain && ./main.exe  bench4.txt   
-``
-
+```
+* Sample output: 
 ```
 Sorted intervals of nets:
   I1[1, 3]

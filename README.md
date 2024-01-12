@@ -1,4 +1,5 @@
-# Grid-based Two-layer Channel Routing
+# NCHU VLSI/CAD Lab
+## Grid-based Two-layer Channel Routing
 * Each pin is labeled with a number from 0 to 1000
 * Problem: \
   Given the label of each upper and lower pins, write a program to find the channel routing with the minimum cost.

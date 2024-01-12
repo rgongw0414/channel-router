@@ -1,5 +1,5 @@
 ## Author
-* rgongw0414 a.k.a. 系辦工讀生 from NCHU VLSI/CAD LAB
+* rgongw0414 a.k.a. 少年白系辦工讀生 from NCHU VLSI/CAD LAB
 * 歡迎請我喝飲料、給我星星
 ## Grid-based Two-layer Channel Routing
 * Each pin is labeled with a number from 0 to 1000
